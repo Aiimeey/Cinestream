@@ -1,0 +1,21 @@
+######
+POST http://localhost:4000/api/user/create
+Content-Type: application/json
+
+{
+    "name" : "imane",
+    "email": "emaaiil@email.com",
+    "password":"azeertyy"
+}
+
+######
+
+
+GET http://localhost:4000/async-error
+Content-Type: application/json
+
+{
+    "name" : "imane",
+    "email": "emaiil@email.com",
+    "password":"azeertyy"
+}
