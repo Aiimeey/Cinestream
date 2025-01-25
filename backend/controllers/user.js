@@ -2,6 +2,7 @@ const User = require('../models/user');
 const { sendError } = require('../utils/helper');
 
 // Controller to create a new user
+
 exports.create = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -12,11 +13,18 @@ exports.create = async (req, res) => {
   const newUser = new User({ name, email, password });
   await newUser.save();
 
+  const OTP = generateOTP();
+
+  const newEmailVerificationToken = new EmailVerificationToken({ owner: newUser._id, token: OTP });
+
+  await newEmailVerificationToken.save();
+
   return res.status(201).json({
     user: {
       id: newUser._id,
       name: newUser.name,
       email: newUser.email,
+
     },
   });
 };
