@@ -76,31 +76,38 @@ Clone the repository to your local machine by running the following command:
 
 ```bash
 git clone https://github.com/Aiimeey/Cinestream.git
+```
 
 Navigate to the Backend Directory
 
 ```bash
 cd Cinestream/backend/
+```
 
 Install Backend Dependencies:
 
 ```bash
 npm install
+```
 
 Run the Backend Server
 ```bash
 npm run dev ./app.js
+```
 
 Open a New Terminal and Navigate to the Frontend Directory
-
+```bash
 cd Cinestream/frontend/
+```
 
 Install Frontend Dependencies:
 ```bash
 npm install
+```
 
 Start the Frontend Development Server
 ```bash
 npm start
+```
 
 
