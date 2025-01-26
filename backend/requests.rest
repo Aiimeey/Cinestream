@@ -1,21 +1,30 @@
-######
+// Define the request for user creation 
 POST http://localhost:4000/api/user/create
 Content-Type: application/json
 
 {
     "name" : "imane",
-    "email": "emaaiil@email.com",
+    "email": "imane@email.com",
     "password":"azeertyy"
 }
 
 ######
-
-
-GET http://localhost:4000/async-error
+POST http://localhost:4000/api/user/verify-email
 Content-Type: application/json
 
 {
-    "name" : "imane",
-    "email": "emaiil@email.com",
+    "userId" : "679588ae3af6001162e78e0f",
+    "OTP" : "514383"
+
+}
+######
+
+POST http://localhost:4000/api/user/sign-in
+Content-Type: application/json
+
+{
+    "email": "imane@email.com",
     "password":"azeertyy"
 }
+
+######
