@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const { isValidObjectId } = require('mongoose');
 const User = require('../models/user');
 const EmailVerificationToken = require('../models/emailVerificationToken');
@@ -79,5 +80,23 @@ exports.verifyEmail = async (req, res) => {
     `,
   });
 
-  res.json({ message: 'Your email is verified.' });
+  return res.json({ message: 'Your email is verified.' });
+};
+
+exports.signIn = async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) return sendError(res, 'Email/Password mismatch!');
+
+  const matched = await user.comparePassword(password);
+  if (!matched) return sendError(res, 'Email/Password mismatch!');
+
+  const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+
+  return res.json({
+    user: {
+      id: user._id, name: user.name, email, token: jwtToken,
+    },
+  });
 };
