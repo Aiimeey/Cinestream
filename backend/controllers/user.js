@@ -1,3 +1,4 @@
+const { isValidObjectId } = require('mongoose');
 const User = require('../models/user');
 const EmailVerificationToken = require('../models/emailVerificationToken');
 const { generateOTP, generateMailTransporter } = require('../utils/mail');
@@ -42,4 +43,41 @@ exports.create = async (req, res) => {
 
     },
   });
+};
+
+exports.verifyEmail = async (req, res) => {
+  const { userId, OTP } = req.body;
+
+  if (!isValidObjectId(userId)) return sendError(res, 'Invalid user!');
+
+  const user = await User.findById(userId);
+  if (!user) return sendError(res, 'user not found!', 404);
+
+  if (user.isVerified) return sendError(res, 'user is already verified!');
+
+  const token = await EmailVerificationToken.findOne({ owner: userId });
+  if (!token) return sendError(res, 'token not found!');
+
+  const isMatched = await token.compareToken(OTP);
+  if (!isMatched) return sendError(res, 'Please submit a valid OTP!');
+
+  user.isVerified = true;
+  await user.save();
+
+  await EmailVerificationToken.findByIdAndDelete(token._id);
+
+  const transport = generateMailTransporter();
+  transport.sendMail({
+    from: 'no-reply@cinestream.com',
+    to: user.email,
+    subject: 'Welcome Email',
+    html: `
+    <div style="border:1px; width:87%;box-shadow: 0px 4px 8px silver;padding:15px;  margin-left:auto; margin-right:auto;text-align:center">
+    <h2>Welcome to our app</h2>
+    <h2 style="color:salmon">your account is verified successfully</h2>
+    </div>
+    `,
+  });
+
+  res.json({ message: 'Your email is verified.' });
 };
