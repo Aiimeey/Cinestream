@@ -3,7 +3,8 @@ const { isValidObjectId } = require('mongoose');
 const User = require('../models/user');
 const EmailVerificationToken = require('../models/emailVerificationToken');
 const { generateOTP, generateMailTransporter } = require('../utils/mail');
-const { sendError } = require('../utils/helper');
+const { sendError, generateRandomByte } = require('../utils/helper');
+const PasswordResetToken = require('../models/passwordResetToken');
 
 exports.create = async (req, res) => {
   const { name, email, password } = req.body;
@@ -137,4 +138,33 @@ exports.resendEmailVerificationToken = async (req, res) => {
   return res.json({
     message: 'New OTP has been sent to your registered email accout.',
   });
+};
+exports.forgetPassword = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) return sendError(res, 'email is missing');
+  const user = await User.findOne({ email });
+  if (!user) return sendError(res, 'User not found!', 404);
+
+  const alreadyHasToken = await PasswordResetToken.findOne({ owner: user._id });
+  if (alreadyHasToken) return sendError(res, 'Only after 5 min you can request for another token!');
+
+  const token = await generateRandomByte();
+  const newPasswordResetToken = await PasswordResetToken({ owner: user._id, token });
+  await newPasswordResetToken.save();
+  const resetPasswordUrl = `http://localhost:3000/reset-password?token=${token}&id=${user._id}`;
+
+  const transport = generateMailTransporter();
+  transport.sendMail({
+    from: 'no-reply@cinestream.com',
+    to: user.email,
+    subject: 'Reset Password Link',
+    html: `
+  <div style="border:1px; width:87%;box-shadow: 0px 4px 8px silver;padding:15px;  margin-left:auto; margin-right:auto;text-align:center;font-family:system-ui">
+  <h2>Click here to change password</h2>
+  <a href="${resetPasswordUrl}" style="color:white; text-decoration: none;background-color: salmon;padding: 14px 25px;  display: inline-block;">Change Password</a>
+  </div>
+  `,
+  });
+  return res.json({ message: 'Link sent to your email' });
 };
