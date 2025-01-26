@@ -12,11 +12,14 @@ const userSchema = mongoose.Schema({
 }, { versionKey: false });
 
 // Hash the user's password before saving if it
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function hashpassword(next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 10);
   }
   next();
 });
-
+userSchema.methods.comparePassword = async function compare(password) {
+  const result = await bcrypt.compare(password, this.password);
+  return result;
+};
 module.exports = mongoose.model('User', userSchema);
