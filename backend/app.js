@@ -1,6 +1,7 @@
+require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
-require('express-async-errors');  
+require('express-async-errors');
 require('./db');
 const { errorHandler } = require('./middlewares/error');
 
@@ -8,11 +9,8 @@ const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
 const userRouter = require('./routes/user');
-app.use('/api/user', userRouter);
-app.get('/async-error', async (req, res) => {
 
-  throw new Error();
-});
+app.use('/api/user', userRouter);
 app.use(errorHandler);
 const PORT = 4000;
 app.listen(PORT, () => {
