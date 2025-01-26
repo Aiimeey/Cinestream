@@ -100,3 +100,41 @@ exports.signIn = async (req, res) => {
     },
   });
 };
+
+exports.resendEmailVerificationToken = async (req, res) => {
+  const { userId } = req.body;
+
+  const user = await User.findById(userId);
+  if (!user) return sendError(res, 'user not found!', 404);
+
+  if (user.isVerified) return sendError(res, 'This email is already verified!');
+
+  const alreadyHasToken = await EmailVerificationToken.findOne({
+    owner: userId,
+  });
+  if (alreadyHasToken) return sendError(res, 'Only after 5 min you can request for another token!');
+
+  const OTP = generateOTP();
+
+  const newEmailVerificationToken = new EmailVerificationToken({ owner: user._id, token: OTP });
+
+  await newEmailVerificationToken.save();
+
+  const transport = generateMailTransporter();
+
+  transport.sendMail({
+    from: 'no-reply@cinestream.com',
+    to: user.email,
+    subject: 'Email Verification',
+    html: `
+    <div style="border:1px; width:87%;box-shadow: 0px 4px 8px silver;padding:10px;  margin-left:auto; margin-right:auto;text-align:center">
+    <h2>Your verification OTP</h2>
+    <h2 style="color:salmon">${OTP}</h2>
+    </div>
+    `,
+  });
+
+  return res.json({
+    message: 'New OTP has been sent to your registered email accout.',
+  });
+};
