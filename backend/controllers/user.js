@@ -139,7 +139,7 @@ exports.resendEmailVerificationToken = async (req, res) => {
     message: 'New OTP has been sent to your registered email accout.',
   });
 };
-exports.forgetPassword = async (req, res) => { 
+exports.forgetPassword = async (req, res) => {
   const { email } = req.body;
 
   if (!email) return sendError(res, 'email is missing');
@@ -171,4 +171,40 @@ exports.forgetPassword = async (req, res) => {
 
 exports.sendResetPasswordTokenStatus = (req, res) => {
   res.json({ valid: true });
+};
+
+exports.resetPassword = async (req, res) => {
+  const { newPassword, userId } = req.body;
+
+  const user = await User.findById(userId);
+  const matched = await user.comparePassword(newPassword);
+  if (matched) {
+    return sendError(
+      res,
+      'The new password must be different from the old one!',
+    );
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  await PasswordResetToken.findByIdAndDelete(req.resetToken._id);
+
+  const transport = generateMailTransporter();
+
+  transport.sendMail({
+    from: 'security@reviewapp.com',
+    to: user.email,
+    subject: 'Password Reset Successfully',
+    html: `
+    <div style="border:1px; width:87%;box-shadow: 0px 4px 8px silver; padding:15px; margin-left:auto; margin-right:auto;text-align:center">
+    <h2>Password Reset Successfully</h2>
+    <h2 style="color:salmon">Now you can login with new password</h2>
+    </div>
+    `,
+  });
+
+  return res.json({
+    message: 'Password reset successfully, now you can login with new password.',
+  });
 };
