@@ -139,7 +139,7 @@ exports.resendEmailVerificationToken = async (req, res) => {
     message: 'New OTP has been sent to your registered email accout.',
   });
 };
-exports.forgetPassword = async (req, res) => {
+exports.forgetPassword = async (req, res) => { 
   const { email } = req.body;
 
   if (!email) return sendError(res, 'email is missing');
@@ -150,7 +150,7 @@ exports.forgetPassword = async (req, res) => {
   if (alreadyHasToken) return sendError(res, 'Only after 5 min you can request for another token!');
 
   const token = await generateRandomByte();
-  const newPasswordResetToken = await PasswordResetToken({ owner: user._id, token });
+  const newPasswordResetToken = await new PasswordResetToken({ owner: user._id, token });
   await newPasswordResetToken.save();
   const resetPasswordUrl = `http://localhost:3000/reset-password?token=${token}&id=${user._id}`;
 
@@ -167,4 +167,8 @@ exports.forgetPassword = async (req, res) => {
   `,
   });
   return res.json({ message: 'Link sent to your email' });
+};
+
+exports.sendResetPasswordTokenStatus = (req, res) => {
+  res.json({ valid: true });
 };
