@@ -46,5 +46,12 @@ Content-Type: application/json
 }
 
 ######
+POST http://localhost:4000/api/user/verify-pass-reset-token
+Content-Type: application/json
 
+{
+    "userId" : "6795f653868fe38b6f79b30f",
+    "token" : "1b7378f75087b4d76e48ecfca2e46ac93b18cc7d412de2e957711010f127"
+
+}
 
