@@ -24,7 +24,7 @@ Content-Type: application/json
 
 {
     "email": "imane@email.com",
-    "password":"azeertyy"
+    "password":"azeertyyy"
 }
 
 ######
@@ -51,7 +51,16 @@ Content-Type: application/json
 
 {
     "userId" : "6795f653868fe38b6f79b30f",
-    "token" : "1b7378f75087b4d76e48ecfca2e46ac93b18cc7d412de2e957711010f127"
+    "token" : "4e32c35aed9d2acbee0b480c241f173f929f661af00130ccebdd2520e29d"
 
 }
 
+######
+POST http://localhost:4000/api/user/reset-password
+Content-Type: application/json
+
+{
+    "userId" : "6795f653868fe38b6f79b30f",
+    "token" : "4e32c35aed9d2acbee0b480c241f173f929f661af00130ccebdd2520e29d",
+ "newPassword":"azeertyyy"
+}
