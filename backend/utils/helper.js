@@ -12,3 +12,7 @@ exports.generateRandomByte = () => new Promise((resolve, reject) => {
     resolve(data);
   });
 });
+// Handle 404 errors for unmatched routes
+exports.handleNotFound = (req, res) => {
+  res.status(404).json({ error: ' Not Found' });
+};
