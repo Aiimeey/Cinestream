@@ -2,7 +2,10 @@
 
 ## _Overview_
 
-Cinestream is a simple and user-friendly movie streaming platform that allows users to stream a variety of films on-demand.
+Cinestream is a simple and user-friendly movie streaming platform that allows users to stream a variety of films on-demand. 
+### _Project Status_
+
+**Note**: This project is still in progress. Currently, the authentication system is implemented. Other features and functionalities are being worked on and will be added in future updates.
 
 ## _Table of Contents_
 
@@ -46,7 +49,81 @@ Cinestream is a simple and user-friendly movie streaming platform that allows us
 ## _API Endpoints_
 
 All available API endpoints are listed in the `requests.rest` file.
+[Click here to open 'requests.rest'](./backend/requests.rest)
 
+### _Authentication Endpoints_
+
+#### _POST /api/user/create_
+Define the request for user creation 
+**Request Body:**
+```json
+{
+    "name" : "String",
+    "email": "String",
+    "password":"String"
+}
+```
+#### _POST /api/user/sign-in_
+Define the request for signin
+**Request Body:**
+```json
+{
+    "email": "String",
+    "password":"String"
+}
+```
+#### _POST /api/user/verify-email_
+Define the request for email verification (redirected to after signing up)
+**Request Body:**
+```json
+{
+    "userId" : "String",
+    "OTP": "String"
+}
+```
+#### _POST /api/user/resend-email-verification-token_
+Define the request for resending email verification
+**Request Body:**
+```json
+{
+    "userId" : "String"
+}
+```
+#### _POST /api/user/forget-password_
+Define the request forget password
+**Request Body:**
+```json
+{
+    "email" : "String"
+}
+```
+
+#### _POST /api/user/verify-pass-reset-token_
+Define the request for password reset token verification
+**Request Body:**
+```json
+{
+    "userId" : "String",
+    "token" : "String"
+
+}
+```
+#### _POST /api/user/reset-password_
+Define the request for reset password
+**Request Body:**
+```json
+{
+    "userId" : "String",
+    "token" : "String",
+    "newPassword":"String"
+}
+```
+#### _POST /api/user/is-auth_
+Define the request for auth
+**Request Body:**
+```json
+Authorization: Bearer <your-token-here>
+```
 ---
 
 ## _Prerequisites_
