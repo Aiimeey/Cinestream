@@ -1,66 +1,71 @@
 // Define the request for user creation 
-POST http://localhost:4000/api/user/create
+POST http://localhost:8000/api/user/create
 Content-Type: application/json
 
 {
     "name" : "imane",
-    "email": "imane@email.com",
+    "email": "imaane@email.com",
     "password":"azeertyy"
 }
 
 ######
-POST http://localhost:4000/api/user/verify-email
+POST http://localhost:8000/api/user/verify-email
 Content-Type: application/json
 
 {
-    "userId" : "679588ae3af6001162e78e0f",
+    "userId" : "679b2813d6a089a21197bc93",
     "OTP" : "514383"
 
 }
 ######
 
-POST http://localhost:4000/api/user/sign-in
+POST http://localhost:8000/api/user/sign-in
 Content-Type: application/json
 
 {
-    "email": "imane@email.com",
+    "email": "imaane@email.com",
     "password":"azeertyyy"
 }
 
 ######
-POST http://localhost:4000/api/user/resend-email-verification-token
+POST http://localhost:8000/api/user/resend-email-verification-token
 Content-Type: application/json
 
 {
-    "userId" : "6795a016e3d4496119c7170c"
+    "userId" : "679b2813d6a089a21197bc93"
 }
 
 ######
 
-POST http://localhost:4000/api/user/forget-password
+POST http://localhost:8000/api/user/forget-password
 Content-Type: application/json
 
 {
-    "email" : "imane@email.com"
+    "email" : "imaane@email.com"
 
 }
 
 ######
-POST http://localhost:4000/api/user/verify-pass-reset-token
+POST http://localhost:8000/api/user/verify-pass-reset-token
 Content-Type: application/json
 
 {
-    "userId" : "6795f653868fe38b6f79b30f",
-    "token" : "4e32c35aed9d2acbee0b480c241f173f929f661af00130ccebdd2520e29d"
+    "userId" : "79b2813d6a089a21197bc93",
+    "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzliMjgxM2Q2YTA4OWEyMTE5N2JjOTMiLCJpYXQiOjE3MzgyMjIwMTl9.2HJ7ofmz6LJGyMiEs7cL4wzrf6eH3_E3t7YvrIH7K0U"
 
 }
 
 ######
-POST http://localhost:4000/api/user/reset-password
+POST http://localhost:8000/api/user/reset-password
 Content-Type: application/json
 
 {
-    "userId" : "6795f653868fe38b6f79b30f",
-    "token" : "4e32c35aed9d2acbee0b480c241f173f929f661af00130ccebdd2520e29d",
- "newPassword":"azeertyyy"
+    "userId" : "679b2813d6a089a21197bc93",
+    "token" : "787ea4eeecfd31bca025c68c817bd1554557b19489f4f5429ef9572dfab1",
+    "newPassword":"azeertyyy"
 }
+
+#####
+GET http://localhost:8000/api/user/is-auth
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzliMjgxM2Q2YTA4OWEyMTE5N2JjOTMiLCJpYXQiOjE3MzgyMjIxODR9.kXHSIvwi_idVHg_oY_lNPkYWTE40aEJ08WQL4AXaUIY

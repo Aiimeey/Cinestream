@@ -14,10 +14,10 @@ const userRouter = require('./routes/user');
 app.use(cors());
 app.use('/api/user', userRouter);
 app.use(errorHandler);
-const PORT = 4000;
 const { handleNotFound } = require('./utils/helper');
-app.use('/*', handleNotFound);
 
+app.use('/*', handleNotFound);
+const PORT = 8000;
 app.listen(PORT, () => {
   console.log(`the server is listening on port ${PORT}`);
 });
