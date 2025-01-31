@@ -8,6 +8,7 @@ import FormInput from "../form/FormInput";
 import Submit from "../form/Submit";
 import Title from "../form/Title";
 
+// Function to validate user input
 const validateUserInfo = ({ email, password }) => {
   const isValidEmail = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -29,6 +30,11 @@ export default function Signin() {
 
   const navigate = useNavigate();
 
+// Destructure to get updateNotification, handleLogin func & authInfo 
+  const { updateNotification } = useNotification();
+  const { handleLogin, authInfo } = useAuth();
+  const { isPending, isLoggedIn } = authInfo;
+
   const handleChange = ({ target }) => {
     const { value, name } = target;
     setUserInfo({ ...userInfo, [name]: value });
@@ -38,10 +44,14 @@ export default function Signin() {
     e.preventDefault();
     const { ok, error } = validateUserInfo(userInfo);
 
-    if (!ok) return console.log("error", error);
+    if (!ok) return updateNotification("error", error);
     handleLogin(userInfo.email, userInfo.password);
   };
 
+  useEffect(() => {
+    if (isLoggedIn) navigate("/");
+    // eslint-disable-next-line
+  }, [isLoggedIn]);
 
   return (
     <FormContainer>
@@ -51,7 +61,7 @@ export default function Signin() {
           <FormInput
             value={userInfo.email}
             onChange={handleChange}
-            placeholder="john@email.com"
+            placeholder="email@example.com"
             name="email"
           />
           <FormInput

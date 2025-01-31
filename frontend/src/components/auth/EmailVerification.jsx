@@ -5,6 +5,7 @@ import Container from "../Container";
 import FormContainer from "../form/FormContainer";
 import Submit from "../form/Submit";
 import Title from "../form/Title";
+import { useAuth, useNotification } from "../../hooks";
 
 const OTP_LENGTH = 6;
 
@@ -24,7 +25,12 @@ export default function EmailVerification() {
   const [activeOtpIndex, setActiveOtpIndex] = useState(0);
 
   
+  const { isAuth, authInfo } = useAuth();
+  const { isLoggedIn, profile  } = authInfo;
+  const isVerified = profile?.isVerified;
+
   const inputRef = useRef();
+  const { updateNotification } = useNotification()
   const { state } = useLocation();
   const user = state?.user;
 
@@ -40,9 +46,9 @@ export default function EmailVerification() {
   const handleOTPResend = async () => {
     const { error, message } = await resendEmailVerificationToken(user.id);
 
-    if (error) return console.log(error);
+    if (error) return updateNotification("error", error);
 
-    console.log(message);
+    updateNotification("success", message);
   };
 
   const handleKeyPress = (event, index) => {
@@ -62,7 +68,7 @@ export default function EmailVerification() {
     e.preventDefault();
 
     if (!isValidOTP(otp)) {
-      return console.log("invalid OTP");
+      return updateNotification("error","invalid OTP");
     }
 
     // submit otp
@@ -70,10 +76,11 @@ export default function EmailVerification() {
       OTP: otp.join(""),
       userId: user.id,
     });
-    if (error) return console.log(error);
+    if (error) return updateNotification("error", error);
 
-    console.log(message);
+    updateNotification("success", message);
     localStorage.setItem("auth-token", userResponse.token);
+    isAuth();
   };
 
   useEffect(() => {
@@ -82,10 +89,9 @@ export default function EmailVerification() {
 
   useEffect(() => {
     if (!user) navigate("/not-found");
+    if (isLoggedIn  && isVerified) navigate("/");
     // eslint-disable-next-line
-  }, [user]);
-
-  // if(!user) return null
+  }, [user, isLoggedIn, isVerified]);
 
   return (
     <FormContainer>
@@ -93,7 +99,7 @@ export default function EmailVerification() {
         <form onSubmit={handleSubmit} className="rounded shadow-gray-400 shadow-sm p-4 space-y-6 bg-eggshell">
           <div>
             <Title>Please enter the OTP to verify your account</Title>
-            <p className="text-center dark:text-dark-subtle text-light-subtle">
+            <p className="text-center  text-light-subtle">
               OTP has been sent to your email
             </p>
           </div>
@@ -108,7 +114,7 @@ export default function EmailVerification() {
                   type="number"
                   value={otp[index] || ""}
                   onChange={(e) => handleOtpChange(e, index)}
-                  className="w-12 h-12 border-2 dark:border-dark-subtle  border-light-subtle darK:focus:border-white focus:border-primary rounded bg-transparent outline-none text-center dark:text-white text-primary font-semibold text-xl spin-button-none"
+                  className="w-12 h-12 border-2  border-light-subtle  focus:border-primary rounded bg-transparent outline-none text-center  text-primary font-semibold text-xl spin-button-none"
                 />
               );
             })}

@@ -34,7 +34,7 @@ export default function ConfirmPassword() {
     setIsVerifying(false);
     if (error) {
       navigate("/auth/reset-password", { replace: true });
-      return console.log(error);
+      return updateNotification("error", error);
     }
 
     if (!valid) {
@@ -54,13 +54,13 @@ export default function ConfirmPassword() {
     e.preventDefault();
 
     if (!password.one.trim())
-      return console.log( "Password is missing!");
+      return updateNotification("error", "Password is missing!");
 
     if (password.one.trim().length < 8)
-      return console.log("Password must be 8 characters long!");
+      return updateNotification("error", "Password must be 8 characters long!");
 
     if (password.one !== password.two)
-      return console.log( "Password do not match!");
+      return updateNotification("error", "Password do not match!");
 
     const { error, message } = await resetPassword({
       newPassword: password.one,
@@ -68,9 +68,9 @@ export default function ConfirmPassword() {
       token,
     });
 
-    if (error) return console.log("error", error);
+    if (error) return updateNotification("error", error);
 
-    console.log("success", message);
+    updateNotification("success", message);
     navigate("/auth/signin", { replace: true });
   };
 
@@ -82,7 +82,7 @@ export default function ConfirmPassword() {
             <h1 className="text-4xl font-semibold  text-primary">
               Please wait we are verifying your token!
             </h1>
-            <ImSpinner3 className="animate-spin text-4xl text-primary" />
+            <ImSpinner3 className="animate-spin text-4xl  text-primary" />
           </div>
         </Container>
       </FormContainer>
@@ -114,7 +114,6 @@ export default function ConfirmPassword() {
           <FormInput
             value={password.two}
             onChange={handleChange}
-            label="Confirm Password"
             placeholder="********"
             name="two"
             type="password"

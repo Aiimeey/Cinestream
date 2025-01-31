@@ -28,6 +28,7 @@ export default function Home() {
           </button>
         </p>
       ) : null}
+
 {isLoggedIn && isVerified ? (
   <div className="relative ml-0 w-72 bg-eggshell rounded-xl p-4 space-y-6 shadow-sm shadow-gray-400 mt-16">
     <p className="text-lg font-semibold text-gray-800">My profile</p>

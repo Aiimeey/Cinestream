@@ -11,6 +11,7 @@ import Title from "../form/Title";
 
 export default function ForgetPassword() {
   const [email, setEmail] = useState("");
+  const { updateNotification } = useNotification();
 
   const handleChange = ({ target }) => {
     const { value } = target;
@@ -20,12 +21,12 @@ export default function ForgetPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isValidEmail(email))
-      return console.log("Invalid email!");
+      return updateNotification("error", "Invalid email!");
 
     const { error, message } = await forgetPassword(email);
-    if (error) return console.log("error"+ error);
+    if (error) return updateNotification("error", error);
 
-    console.log("success"+message);
+    updateNotification("success", message);
   };
 
   return (
@@ -36,7 +37,7 @@ export default function ForgetPassword() {
           <FormInput
             onChange={handleChange}
             value={email}
-            placeholder="john@email.com"
+            placeholder="email@example.com"
             name="email"
           />
           <Submit value="Send Link" />

@@ -9,6 +9,7 @@ import Title from "../form/Title";
 import {useNavigate } from "react-router-dom";
 import { useAuth, useNotification } from "../../hooks";
 
+// Function to validate user input
 const validateUserInfo = ({ name, email, password }) => {
   const isValidEmail = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
   const isValidName = /^[a-z A-Z]+$/;
@@ -32,8 +33,12 @@ export default function Signup() {
     email: "",
     password: "",
   });
-  
+    // Destructure to get updateNotification function and authInfo
+    const { updateNotification } = useNotification();
     const navigate = useNavigate();
+    const {  authInfo } = useAuth();
+    const {  isLoggedIn } = authInfo;
+  
   const handleChange = ({ target }) => {
     const { name, value } = target;
     setUserInfo({ ...userInfo, [name]: value });
@@ -43,14 +48,17 @@ export default function Signup() {
     e.preventDefault();
     const { ok, error } = validateUserInfo(userInfo);
 
-    if (!ok) return console.log("error"+ error);
+    if (!ok) return updateNotification("error", error);
 
     const response = await createUser(userInfo);
     if (response.error) return console.log(response.error);
     console.log(response.user);
     navigate('/auth/verification', {state:{user:response.user}, replace: true,})
   };
-
+  useEffect(() => {
+    if (isLoggedIn) navigate("/");
+    // eslint-disable-next-line
+  }, [isLoggedIn]);
   const { name, email, password } = userInfo;
 
   return (
