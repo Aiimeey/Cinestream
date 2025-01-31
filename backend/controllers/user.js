@@ -21,7 +21,6 @@ exports.create = async (req, res) => {
   const newEmailVerificationToken = new EmailVerificationToken({ owner: newUser._id, token: OTP });
 
   await newEmailVerificationToken.save();
-
   // Send email with OTP for user email verification
   const transport = generateMailTransporter();
 
@@ -30,7 +29,7 @@ exports.create = async (req, res) => {
     to: newUser.email,
     subject: 'Email Verification',
     html: `
-    <div style="border:1px; width:87%;box-shadow: 0px 4px 8px silver;padding:10px; margin-left:auto; margin-right:auto;text-align:center">
+    <div style="border:1px; width:87%;box-shadow: 0px 4px 8px silver;padding:10px;  margin-left:auto; margin-right:auto;text-align:center">
     <h2>Your verification OTP</h2>
     <h2 style="color:salmon">${OTP}</h2>
     </div>
@@ -81,7 +80,17 @@ exports.verifyEmail = async (req, res) => {
     `,
   });
 
-  return res.json({ message: 'Your email is verified.' });
+  const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+  return res.json({
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      token: jwtToken,
+      isVerified: user.isVerified,
+    },
+    message: 'Your email is verified.',
+  });
 };
 
 exports.signIn = async (req, res) => {
@@ -93,11 +102,13 @@ exports.signIn = async (req, res) => {
   const matched = await user.comparePassword(password);
   if (!matched) return sendError(res, 'Email/Password mismatch!');
 
-  const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+  const { _id, name, isVerified } = user;
+
+  const jwtToken = jwt.sign({ userId: _id }, process.env.JWT_SECRET);
 
   return res.json({
     user: {
-      id: user._id, name: user.name, email, token: jwtToken,
+      id: _id, name, email, token: jwtToken, isVerified,
     },
   });
 };
@@ -139,6 +150,7 @@ exports.resendEmailVerificationToken = async (req, res) => {
     message: 'New OTP has been sent to your registered email accout.',
   });
 };
+
 exports.forgetPassword = async (req, res) => {
   const { email } = req.body;
 
@@ -152,7 +164,7 @@ exports.forgetPassword = async (req, res) => {
   const token = await generateRandomByte();
   const newPasswordResetToken = await new PasswordResetToken({ owner: user._id, token });
   await newPasswordResetToken.save();
-  const resetPasswordUrl = `http://localhost:3000/reset-password?token=${token}&id=${user._id}`;
+  const resetPasswordUrl = `http://localhost:3000/auth/reset-password?token=${token}&id=${user._id}`;
 
   const transport = generateMailTransporter();
   transport.sendMail({
